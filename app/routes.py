@@ -54,7 +54,7 @@ def menu():
         db.session.commit()
         tasks = current_user.get_tasks()
         return redirect('menu')
-    return render_template('menu.html', user = current_user, form=form, tasks=tasks)
+    return render_template('menu.html', user = current_user, form=form, tasks=tasks, date=datetime.now())
 
 @app.route('/delete/<id>', methods=['GET', 'POST'])
 def delete(id):
@@ -64,10 +64,12 @@ def delete(id):
         db.session.commit()
         return redirect(url_for('menu'))
     
-@app.route('/completed/<id>', methods=['GET', 'POST'])
+@app.route('/change_status/<id>', methods=['GET', 'POST'])
 def completed(id):
     if Task.query.filter_by(id=int(id)).first():
         task = Task.query.filter_by(id=int(id)).first()
-        task.is_completed = True
+        task.is_completed = not task.is_completed
         db.session.commit()
         return redirect(url_for('menu'))
+    
+    

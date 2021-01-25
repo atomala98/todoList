@@ -26,7 +26,7 @@
             </p>
             <p class="deadline">
                 {{ form.deadline.label }}
-                {{ form.deadline(class_="form-elem date-input", type="datetime-local") }}
+                {{ form.deadline(class_="form-elem date-input", type="datetime-local", min=date) }}
             </p>
             <p class="submit-div">
                 {{ form.submit(class_="submit") }}
@@ -68,8 +68,12 @@
                     </div>
                 </div>
                 <div class="complete">
-                    <form action={{ "/completed/" + task.id|string }}>
-                        <button type="submit" class="completed"><i class="fas fa-check"></i></button>
+                    <form action={{ "/change_status/" + task.id|string }}>
+                        {% if task.is_completed %}
+                            <button type="submit" class="not-completed"><i class="far fa-times-circle"></i></button>
+                        {% else %}
+                            <button type="submit" class="completed"><i class="fas fa-check"></i></button>
+                        {% endif %}
                     </form>
                 </div>
                 <div class="del">
