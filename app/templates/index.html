@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet">
+    <title>Document</title>
+</head>
+<body>
+    <header class="header">
+        <h1>Welcome to todoList</h1>
+    </header>
+    <main>
+        <div class="text">
+            <h1>Become part of todoList!</h1>
+            <p>todoList is a place, where you can store all your tasks! Forgot about using paper and pen - in XXI we are going digital.</p>
+            <p>Don't have account? </p><a href="/register">Register!</a>
+        </div>
+        <div class="login-form">
+            <form action="" method="post" class="login">
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.email.label }}<br>
+                    {{ form.email(class_="form-elem") }}
+                </p>
+                <p>
+                    {{ form.password.label }}<br>
+                    {{ form.password(class_="form-elem") }}
+                </p>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <p>
+                            {% for message in messages %}
+                                {{ message }}
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                {% endwith %}
+                <p>
+                    {{ form.submit(class_="submit") }}
+                </p>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,48 @@
+.header {
+    width: 90%;
+    margin: auto;
+    text-align: center;
+    font-size: 2rem;
+}
+
+h1 {
+    margin: none;
+    padding: none;
+}
+
+main {
+    margin: auto;
+    width: 70%;
+    display: flex;
+}
+
+p {
+    max-width: 90%;
+}
+
+.login-form {
+    width: 40vw;
+    margin: auto;
+    padding-top: 20px;
+    text-align: center;
+    box-shadow: 4px;
+}
+
+.text {
+    width: 40%;
+}
+
+@media (max-width: 600px) {
+    main {
+        flex-direction: column;
+        align-items: center;
+    }
+    .text {
+        width: 100%;
+    }
+
+    .header {
+        padding-bottom: 0px;
+        margin-bottom: 0px;
+    }
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/menu.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+    <title>Document</title>
+</head>
+<body>
+    <nav class="navbar">
+        <a class="logout" href={{ url_for("logout") }}>Logout</a>
+    </nav>
+    <header class="header">
+        <h1>Hi, {{ user.username }}</h1>
+    </header>
+    <form action="" method="post" class="login">
+        <div class="task-form">
+            {{ form.csrf_token }}
+            <p class="task-input">
+                {{ form.task.label }}
+                {{ form.task(class_="form-elem input") }}
+            </p>
+            <p class="deadline">
+                {{ form.deadline.label }}
+                {{ form.deadline(class_="form-elem date-input", type="datetime-local") }}
+            </p>
+            <p class="submit-div">
+                {{ form.submit(class_="submit") }}
+            </p>
+            {% for error in form.deadline.errors %}
+                <p>{{error}}</p>
+            {% endfor %}
+        </div>
+    </form>
+    <div class="errors">
+            {{ form.csrf_token }}
+            <p class="task-input">
+                {% for error in form.task.errors %}
+                    <p>{{error}}</p>
+                {% endfor %}
+            </p>
+            <p class="deadline">
+                {% for error in form.deadline.errors %}
+                    <p>{{error}}</p>
+                {% endfor %}
+            </p>
+        </div>
+    <div class="tasks">
+        {% for task in tasks %}
+            <div class="task">
+                <div class="task-value">
+                    {% if task.is_completed %}
+                        <s>{{ task.task }}</s>
+                    {% else %} 
+                        {{ task. task }}
+                    {% endif %}
+                </div>
+                <div class="dates">
+                    <div class="date">
+                        Posted: {{ task.timestamp.strftime("%Y-%m-%d %H:%M:%S") }}
+                    </div>
+                    <div class="date">
+                        Deadline: {{ task.deadline }}
+                    </div>
+                </div>
+                <div class="complete">
+                    <form action={{ "/completed/" + task.id|string }}>
+                        <button type="submit" class="completed"><i class="fas fa-check"></i></button>
+                    </form>
+                </div>
+                <div class="del">
+                    <form action={{ "/delete/" + task.id|string }}>
+                        <button type="submit" class="delete"><i class="fas fa-trash"></i></button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

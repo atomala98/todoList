@@ -1,0 +1,80 @@
+.header {
+    width: 90%;
+    margin: auto;
+    text-align: center;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+.task-form {
+    display: flex;
+    justify-content: space-around;
+    width: 90%;
+    margin: auto;
+}
+
+.task-input {
+    width: 45%;
+}
+
+.deadline {
+    width: 30%;
+}
+
+.form-elem {
+    height: 1.25rem;
+}
+
+.submit {
+    margin-top: 20px;
+}
+
+.date-input {
+    padding-bottom: 2px;
+}
+
+.tasks {
+    width: 80%;
+    margin: auto;
+}
+
+.task {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.task-value {
+    flex: 3;
+}
+
+.delete {
+    align-self: flex-end;
+}
+
+.dates {
+    flex: 1;
+}
+
+.date {
+    font-size: 0.5rem;
+}
+
+.delete {
+    background-color: red;
+    border: none;
+    color: white;
+    border-radius: 2px;
+    padding: 5px 14px;
+}
+
+.completed {
+    background-color: white;
+    border: 2px solid green;
+    color: green;
+    border-radius: 2px;
+    padding: 3px 10px;
+    margin-right: 5px;
+}
