@@ -17,7 +17,7 @@
     <header class="header">
         <h1>Hi, {{ user.username }}</h1>
     </header>
-    <form action="" method="post" class="login">
+    <form action="" method="POST" class="add-task">
         <div class="task-form">
             {{ form.csrf_token }}
             <p class="task-input">
@@ -26,29 +26,29 @@
             </p>
             <p class="deadline">
                 {{ form.deadline.label }}
-                {{ form.deadline(class_="form-elem date-input", type="datetime-local", min=date) }}
+                {{ form.deadline(class_="form-elem date-input", type="datetime-local") }}
             </p>
             <p class="submit-div">
-                {{ form.submit(class_="submit") }}
+                {{ form.submit1(class_="submit create") }}
             </p>
-            {% for error in form.deadline.errors %}
-                <p>{{error}}</p>
-            {% endfor %}
         </div>
     </form>
-    <div class="errors">
-            {{ form.csrf_token }}
-            <p class="task-input">
-                {% for error in form.task.errors %}
-                    <p>{{error}}</p>
-                {% endfor %}
+    <form action="" method="POST" class="select">
+        <div class="filter-form">
+            {{ filter_form.csrf_token }}
+            <p class="sort-by">
+                {{ filter_form.sort_by.label }}
+                {{ filter_form.sort_by(class_="form-elem") }}
             </p>
-            <p class="deadline">
-                {% for error in form.deadline.errors %}
-                    <p>{{error}}</p>
-                {% endfor %}
+            <p class="filter-by">
+                {{ filter_form.filter_by.label }}
+                {{ filter_form.filter_by(class_="form-elem") }}
+            </p>
+            <p class="submit-filter">
+                {{ filter_form.submit2(class_="submit filter") }}
             </p>
         </div>
+    </form>
     <div class="tasks">
         {% for task in tasks %}
             <div class="task">
@@ -56,7 +56,7 @@
                     {% if task.is_completed %}
                         <s>{{ task.task }}</s>
                     {% else %} 
-                        {{ task. task }}
+                        {{ task.task }}
                     {% endif %}
                 </div>
                 <div class="dates">
@@ -70,7 +70,7 @@
                 <div class="complete">
                     <form action={{ "/change_status/" + task.id|string }}>
                         {% if task.is_completed %}
-                            <button type="submit" class="not-completed"><i class="far fa-times-circle"></i></button>
+                            <button type="submit" class="not-completed"><i class="fas fa-times"></i></button>
                         {% else %}
                             <button type="submit" class="completed"><i class="fas fa-check"></i></button>
                         {% endif %}

@@ -1,6 +1,6 @@
 from app import app, db
-from flask import render_template, redirect, url_for, flash
-from app.forms import LoginForm, RegisterForm, TaskForm
+from flask import render_template, redirect, url_for, flash, request
+from app.forms import LoginForm, RegisterForm, TaskForm, FilterForm
 from flask_login import current_user, login_user, logout_user
 from app.models import User, Task
 from datetime import datetime
@@ -46,15 +46,18 @@ def register():
 
 @app.route('/menu', methods=['GET', 'POST'])
 def menu():
+    task_form = TaskForm()
+    filter_form = FilterForm()
     tasks = current_user.get_tasks()
-    form = TaskForm()
-    if form.validate_on_submit():
-        task = Task(task=form.task.data, deadline=form.deadline.data, author=current_user)
+    if task_form.validate_on_submit():
+        task = Task(task=task_form.task.data, deadline=task_form.deadline.data, author=current_user)
         db.session.add(task)
         db.session.commit()
         tasks = current_user.get_tasks()
         return redirect('menu')
-    return render_template('menu.html', user = current_user, form=form, tasks=tasks, date=datetime.now())
+    if filter_form.validate_on_submit():
+        tasks = current_user.get_tasks_filtered(filter_form.sort_by.data, filter_form.filter_by.data)
+    return render_template('menu.html', user = current_user, form=task_form, filter_form=filter_form, tasks=tasks, date=datetime.now())
 
 @app.route('/delete/<id>', methods=['GET', 'POST'])
 def delete(id):

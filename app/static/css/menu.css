@@ -28,7 +28,7 @@ a {
     height: 1.25rem;
 }
 
-.submit {
+.create {
     margin-top: 20px;
 }
 
@@ -84,6 +84,26 @@ a {
     border: 2px solid red;
     color: red;
     border-radius: 2px;
-    padding: 3px 10px;
+    padding: 3px 12px;
     margin-right: 5px;
+}
+
+.sort {
+    width: 80%;
+    margin: auto;
+    padding-bottom: 20px;
+}
+
+.filter-form {
+    width: 80%;
+    margin: auto;
+    display: flex;
+}
+
+.filter-by, .submit-filter {
+    margin-left: 10px;
+}
+
+.filter {
+    margin-top: 12px;
 }

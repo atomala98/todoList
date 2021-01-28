@@ -17,7 +17,18 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
     
     def get_tasks(self):
-        return Task.query.filter_by(user_id=self.id).all()
+        return Task.query.filter_by(user_id=self.id)
+    
+    def get_tasks_filtered(self, sort_by, filter_by):
+        if filter_by == "All":
+            tasks = Task.query.filter_by(user_id=self.id)
+        elif filter_by == "Completed":
+            tasks = Task.query.filter_by(user_id=self.id, is_completed=True)
+        else:
+            tasks = Task.query.filter_by(user_id=self.id, is_completed=False)
+        if sort_by == "Date Created":
+            return tasks.order_by(Task.timestamp)
+        return tasks.order_by(Task.deadline)        
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
