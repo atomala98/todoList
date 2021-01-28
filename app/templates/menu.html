@@ -27,6 +27,9 @@
             <p class="deadline">
                 {{ form.deadline.label }}
                 {{ form.deadline(class_="form-elem date-input", type="datetime-local") }}
+                {% for errors in form.deadline.errors %}
+                    {{ errors }}
+                {% endfor %}
             </p>
             <p class="submit-div">
                 {{ form.submit1(class_="submit create") }}

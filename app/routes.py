@@ -5,6 +5,7 @@ from flask_login import current_user, login_user, logout_user
 from app.models import User, Task
 from datetime import datetime
 
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
@@ -20,10 +21,12 @@ def index():
         return redirect(url_for('menu'))
     return render_template('index.html', form=form)
 
+
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -59,6 +62,7 @@ def menu():
         tasks = current_user.get_tasks_filtered(filter_form.sort_by.data, filter_form.filter_by.data)
     return render_template('menu.html', user = current_user, form=task_form, filter_form=filter_form, tasks=tasks, date=datetime.now())
 
+
 @app.route('/delete/<id>', methods=['GET', 'POST'])
 def delete(id):
     if Task.query.filter_by(id=int(id)).first():
@@ -66,7 +70,8 @@ def delete(id):
         db.session.delete(task)
         db.session.commit()
         return redirect(url_for('menu'))
-    
+
+
 @app.route('/change_status/<id>', methods=['GET', 'POST'])
 def completed(id):
     if Task.query.filter_by(id=int(id)).first():
@@ -74,5 +79,4 @@ def completed(id):
         task.is_completed = not task.is_completed
         db.session.commit()
         return redirect(url_for('menu'))
-    
     
