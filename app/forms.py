@@ -35,3 +35,12 @@ class FilterForm(FlaskForm):
     sort_by = SelectField('Sort by', choices=['Date Created', 'Deadline'], validators=[])
     filter_by = SelectField('Filter by', choices=['All', 'Completed', "Uncompleted"], validators=[])
     submit2 = SubmitField('Filter')
+
+class ResetPasswordForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+    
+class ChangePasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField('Repeat password', validators=[EqualTo("password")])
+    submit = SubmitField('Register')

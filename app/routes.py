@@ -1,10 +1,10 @@
 from app import app, db
 from flask import render_template, redirect, url_for, flash, request
-from app.forms import LoginForm, RegisterForm, TaskForm, FilterForm
+from app.forms import LoginForm, RegisterForm, TaskForm, FilterForm, ResetPasswordForm, ChangePasswordForm
 from flask_login import current_user, login_user, logout_user
 from app.models import User, Task
 from datetime import datetime
-
+from app.mails import send_password_reset_email
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -47,6 +47,7 @@ def register():
         return redirect(url_for('index'))
     return render_template('register.html', form=form)
 
+
 @app.route('/menu', methods=['GET', 'POST'])
 def menu():
     task_form = TaskForm()
@@ -79,4 +80,31 @@ def completed(id):
         task.is_completed = not task.is_completed
         db.session.commit()
         return redirect(url_for('menu'))
-    
+
+
+@app.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('menu'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            send_password_reset_email(user)
+        return redirect(url_for('index'))
+    return render_template('reset_password_request.html', form=form)
+
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('menu'))
+    user = User.verify_reset_password_token(token)
+    if not user:
+        return redirect(url_for('index'))
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('reset_password.html', form=form)
