@@ -4,7 +4,7 @@ from app.forms import LoginForm, RegisterForm, TaskForm, FilterForm, ResetPasswo
 from flask_login import current_user, login_user, logout_user
 from app.models import User, Task
 from datetime import datetime
-from app.mails import send_password_reset_email
+from app.mails import send_password_reset_email, send_auth_email
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -15,7 +15,10 @@ def index():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash("Invalid email or password")
+            flash("Invalid email or password.")
+            return redirect(url_for('index'))
+        if not user.authenticated:
+            flash("Activate your account.")
             return redirect(url_for('index'))
         login_user(user)
         return redirect(url_for('menu'))
@@ -34,6 +37,9 @@ def register():
         return redirect(url_for('menu'))
     form = RegisterForm()
     if form.validate_on_submit():
+        if User.query.filter_by(username=form.username.data, authenticated=False).first() is not None:
+            User.query.filter_by(username=form.username.data, authenticated=False).delete()
+            db.session.commit()
         if User.query.filter_by(username=form.username.data).first() is not None:
             flash("Username already taken!")
             return redirect(url_for('register'))
@@ -44,6 +50,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
+        send_auth_email(user)
         return redirect(url_for('index'))
     return render_template('register.html', form=form)
 
@@ -99,7 +106,7 @@ def reset_password_request():
 def reset_password(token):
     if current_user.is_authenticated:
         return redirect(url_for('menu'))
-    user = User.verify_reset_password_token(token)
+    user = User.verify_token(token)
     if not user:
         return redirect(url_for('index'))
     form = ChangePasswordForm()
@@ -108,3 +115,13 @@ def reset_password(token):
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('reset_password.html', form=form)
+
+
+@app.route('/auth/<token>')
+def auth(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('menu'))
+    user = User.verify_token(token)
+    user.authenticated = True
+    db.session.commit()
+    return redirect(url_for('index'))

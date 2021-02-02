@@ -11,6 +11,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     tasks = db.relationship('Task', backref='author', lazy='dynamic')
+    authenticated = db.Column(db.Boolean, index=True, default=False)
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -32,13 +33,13 @@ class User(UserMixin, db.Model):
             return tasks.order_by(Task.timestamp)
         return tasks.order_by(Task.deadline)        
     
-    def get_reset_password_token(self, expires_in=600):
+    def get_token(self, expires_in=600):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
             app.config['SECRET_KEY'], algorithm='HS256')
 
     @staticmethod
-    def verify_reset_password_token(token):
+    def verify_token(token):
         try:
             id = jwt.decode(token, app.config['SECRET_KEY'],
                             algorithms=['HS256'])['reset_password']
