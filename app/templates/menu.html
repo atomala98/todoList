@@ -66,9 +66,15 @@
                     <div class="date">
                         Posted: {{ task.timestamp.strftime("%Y-%m-%d %H:%M:%S") }}
                     </div>
-                    <div class="date">
+                    {% if task.deadline.timestamp() - task.timestamp.timestamp() < 86400 %}
+                    <div class="date alert">
                         Deadline: {{ task.deadline }}
                     </div>
+                    {% else %}
+                    <div class="date" color="red">
+                        Deadline: {{ task.deadline }}
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="complete">
                     <form action={{ "/change_status/" + task.id|string }}>

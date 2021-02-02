@@ -60,13 +60,13 @@ def menu():
     task_form = TaskForm()
     filter_form = FilterForm()
     tasks = current_user.get_tasks()
-    if task_form.validate_on_submit():
+    if task_form.submit1.data and task_form.validate_on_submit():
         task = Task(task=task_form.task.data, deadline=task_form.deadline.data, author=current_user)
         db.session.add(task)
         db.session.commit()
         tasks = current_user.get_tasks()
         return redirect('menu')
-    if filter_form.validate_on_submit():
+    if filter_form.submit2.data and filter_form.validate_on_submit():
         tasks = current_user.get_tasks_filtered(filter_form.sort_by.data, filter_form.filter_by.data)
     return render_template('menu.html', user = current_user, form=task_form, filter_form=filter_form, tasks=tasks, date=datetime.now())
 

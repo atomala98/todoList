@@ -114,3 +114,7 @@ a {
 .filter {
     margin-top: 12px;
 }
+
+.alert {
+    color: red;
+}
