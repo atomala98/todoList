@@ -1,50 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet">
-    <title>Document</title>
-</head>
-<body>
-    <header class="header">
-        <h1>Welcome to todoList</h1>
-    </header>
-    <main>
-        <div class="text">
+{% extends 'base.html' %}
+{% block title %}todoList Homepage{% endblock %}
+{% block start %}Welcome to todoList{% endblock %}
+{% block body %}
+    <div class="row">
+        <div class="col-md-8 col-sm-12">
             <h1>Become part of todoList!</h1>
             <p>todoList is a place, where you can store all your tasks! Forgot about using paper and pen - in XXI we are going digital.</p>
-            <p>Don't have account? </p><a href="/register">Register!</a>
-            <p>Forgot your password? </p><a href="/reset_password_request">Reset Password</a>
+            <p>Don't have account? </p><a href="/register" class="btn btn-primary mb-3">Register!</a>
+            <p>Forgot your password? </p><a href="/reset_password_request" class="btn btn-primary mb-5">Reset Password</a>
         </div>
-        <div class="login-form">
+        <div class="col-md-4 jumbotron">
             <form action="" method="post" class="login">
                 {{ form.hidden_tag() }}
                 <p>
                     {{ form.email.label }}<br>
-                    {{ form.email(class_="form-elem") }}
+                    {{ form.email(class_="form-control") }}
                 </p>
                 <p>
                     {{ form.password.label }}<br>
-                    {{ form.password(class_="form-elem") }}
+                    {{ form.password(class_="form-control") }}
                 </p>
-                {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        <p>
-                            {% for message in messages %}
-                                {{ message }}
-                            {% endfor %}
-                        </p>
-                    {% endif %}
-                {% endwith %}
                 <p>
-                    {{ form.submit(class_="submit") }}
+                    {{ form.submit(class_="btn btn-success") }}
                 </p>
             </form>
         </div>
-    </main>
-</body>
-</html>
+    </div>
+{% endblock %}

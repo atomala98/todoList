@@ -1,53 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/register.css') }}" rel="stylesheet">
-    <title>Document</title>
-</head>
-<body>
-    <header class="header">
-        <h1>Register</h1>
-    </header>
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block start %}Register{% endblock %}
+{% block body %}
     <div class="register-form">
         <form action="" method="post" class="login">
             {{ form.hidden_tag() }}
             <p>
                 {{ form.username.label }}<br>
-                {{ form.username(class_="form-elem") }}
+                {{ form.username(class_="form-control") }}
             </p>
             <p>
                 {{ form.email.label }}<br>
-                {{ form.email(class_="form-elem") }}
+                {{ form.email(class_="form-control") }}
             </p>
             <p>
                 {{ form.password.label }}<br>
-                {{ form.password(class_="form-elem") }}
+                {{ form.password(class_="form-control") }}
             </p>
             <p>
                 {{ form.password2.label }}<br>
-                {{ form.password2(class_="form-elem") }}
+                {{ form.password2(class_="form-control") }}
             </p>
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    <p>
-                        {% for message in messages %}
-                            {{ message }}
-                        {% endfor %}
-                    </p>
-                {% endif %}
-            {% endwith %}
             <p>
-                {{ form.submit(class_="submit") }}
+                {{ form.submit(class_="btn btn-success") }}
             </p>
         </form>
         <div class="text">
-            <a href="{{ url_for("index") }}">Go back to login page</a>
+            <a href="{{ url_for("index") }}" class="btn btn-primary">Go back to login page</a>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

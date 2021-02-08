@@ -45,4 +45,4 @@ class ResetPasswordForm(FlaskForm):
 class ChangePasswordForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField('Repeat password', validators=[EqualTo("password")])
-    submit = SubmitField('Register')
+    submit = SubmitField('Reset password')
