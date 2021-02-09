@@ -6,6 +6,10 @@
         <form action="" method="post" class="col-6">
                 {{ form.hidden_tag() }}
                 <p>
+                    {{ form.task.label }}
+                    {{ form.task(class_="form-control", value=task.task )}}
+                </p>
+                <p>
                     {{ form.description.label }}<br>
                     <textarea class="form-control" id="description" name="description" required rows="12">{{task.description}}</textarea>
                 </p>
@@ -13,5 +17,27 @@
                     {{ form.submit1(class_="btn btn-primary") }}
                 </p>
             </form>
+        <div class="container col-6">
+            <form action="" method="post">
+                {{ sub_form.hidden_tag() }}
+                <p>
+                    {{ sub_form.subtask.label }}<br>
+                    {{ sub_form.subtask(class_="form-control") }}
+                </p>
+                <p>
+                    {{ sub_form.submit2(class_="btn btn-primary") }}
+                </p>
+            </form>
+            <div class="mt-4">
+                <h6 class="mb-3">Subtasks:</h6>
+                {% if task.subtasks.first() %}
+                    {% for task in task.subtasks %}
+                        <p>{{task.task}}</p>
+                    {% endfor %}
+                {% else %}
+                Add subtasks to a task!
+                {% endif %}
+            </div>
+        </div>
     </div>
 {% endblock %} 

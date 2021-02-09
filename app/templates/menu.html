@@ -38,9 +38,9 @@
         </div>
     </form>
     <div class="tasks">
-        <div class="my-2 py-2 accordion" id="acc">
+        <div class="accordion" id="acc">
             {% for task in tasks %}
-                <div class="accordion-item p-2 border rounded">
+                <div class="accordion-item p-2 mt-2 mb-2 border rounded">
                     <div class="accordion-header row" id={{ "task" + task.id|string }}>
                         <div class="col-8 h4 my-auto">
                             {% if task.is_completed %}
@@ -79,7 +79,7 @@
                             </button>
                         </div>
                     </div>
-                    <div id={{ "collapse" + task.id|string }} class="collapse show" aria-labelledby={{ "task" + task.id|string }} data-parent="#acc">                        
+                    <div id={{ "collapse" + task.id|string }} class="collapse" aria-labelledby={{ "task" + task.id|string }} data-parent="#acc">                        
                         <div class="card-body">
                             <div class="container">
                                 <p>
@@ -93,8 +93,9 @@
                             <div class="container">
                                 <p>
                                     {% if task.subtasks.first() %}
+                                        <h6 class="mb-3">Subtasks:</h6>
                                         {% for task in task.subtasks %}
-                                            {{task.task}}
+                                            <p>{{task.task}}</p>
                                         {% endfor %}
                                     {% else %}
                                     Add subtasks to a task!
@@ -102,7 +103,7 @@
                                 </p>
                             </div>
                             <div class="container">
-                                <a href={{ "task/" + task.id|string }}>Edit</a>
+                                <a href={{ "task/" + task.id|string }}>Edit task</a>
                             </div>
                         </div>
                     </div>

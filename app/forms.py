@@ -48,5 +48,10 @@ class ChangePasswordForm(FlaskForm):
     submit = SubmitField('Reset password')
     
 class TaskDescriptionForm(FlaskForm):
+    task = StringField('Task', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
     submit1 = SubmitField('Change description')
+    
+class SubtaskForm(FlaskForm):
+    subtask = StringField('Subtask', validators=[DataRequired()])
+    submit2 = SubmitField('Add subtask')

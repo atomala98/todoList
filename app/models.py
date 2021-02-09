@@ -62,8 +62,8 @@ class Task(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.now())
     deadline = db.Column(db.DateTime, index=True)
     is_completed = db.Column(db.Boolean, default=False)
-    description = db.Column(db.String(500))
-    subtasks = db.relationship('Subtask', backref='author', lazy='dynamic')
+    description = db.Column(db.String(500), default="")
+    subtasks = db.relationship('Subtask', backref='main_task', lazy='dynamic')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
     def __repr__(self):

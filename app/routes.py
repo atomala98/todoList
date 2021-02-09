@@ -1,8 +1,8 @@
 from app import app, db
 from flask import render_template, redirect, url_for, flash, request
-from app.forms import LoginForm, RegisterForm, TaskForm, FilterForm, ResetPasswordForm, ChangePasswordForm, TaskDescriptionForm
+from app.forms import SubtaskForm, LoginForm, RegisterForm, TaskForm, FilterForm, ResetPasswordForm, ChangePasswordForm, TaskDescriptionForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User, Task
+from app.models import User, Task, Subtask
 from datetime import datetime
 from app.mails import send_password_reset_email, send_auth_email
 
@@ -136,9 +136,14 @@ def auth(token):
 def task(id):
     description_form = TaskDescriptionForm()
     task = Task.query.filter_by(id=int(id)).first()
+    sub_form = SubtaskForm()
     if description_form.submit1.data and description_form.validate_on_submit():
         print(description_form.description.data)
         task.description = description_form.description.data
         db.session.commit()
         return redirect(url_for('menu'))
-    return render_template('task.html', task=task, form=description_form)
+    if sub_form.submit2.data and sub_form.validate_on_submit():
+        subtask = Subtask(task=sub_form.subtask.data, main_task=task)
+        db.session.add(task)
+        db.session.commit()
+    return render_template('task.html', task=task, form=description_form, sub_form=sub_form)
