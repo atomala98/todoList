@@ -55,3 +55,5 @@ class TaskDescriptionForm(FlaskForm):
 class SubtaskForm(FlaskForm):
     subtask = StringField('Subtask', validators=[DataRequired()])
     submit2 = SubmitField('Add subtask')
+    
+    

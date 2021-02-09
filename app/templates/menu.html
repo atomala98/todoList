@@ -63,7 +63,7 @@
                                 </div>
                             {% endif %}
                         </div>
-                        <div class="col-2">
+                        <div class="col-2 row">
                             <form class="col-4 form-temp" action={{ "/change_status/" + task.id|string }}>
                                 {% if task.is_completed %}
                                     <button type="submit" class="btn btn-warning form-item h-100"><i class="fas fa-times"></i></button>
@@ -72,7 +72,7 @@
                                 {% endif %}
                             </form>
                             <form class="col-4 form-temp" action={{ "/delete/" + task.id|string }}>
-                                <button type="submit" class="btn btn-danger h-100 form-item"><i class="fas fa-trash"></i></button>
+                                <button type="submit" class="btn btn-danger w-100 h-100 form-item"><i class="fas fa-trash"></i></button>
                             </form>
                             <button class="btn btn-primary col-4" type="button" data-toggle="collapse" data-target={{ "#collapse" + task.id|string }} aria-expanded="false" aria-controls={{ "collapse" + task.id|string }}>
                                 <i class="fas fa-chevron-down"></i>
@@ -95,7 +95,7 @@
                                     {% if task.subtasks.first() %}
                                         <h6 class="mb-3">Subtasks:</h6>
                                         {% for task in task.subtasks %}
-                                            <p>{{task.task}}</p>
+                                            <p class="border rounded p-2">{{task.task}}</p>
                                         {% endfor %}
                                     {% else %}
                                     Add subtasks to a task!
@@ -103,7 +103,7 @@
                                 </p>
                             </div>
                             <div class="container">
-                                <a href={{ "task/" + task.id|string }}>Edit task</a>
+                                <a class="btn btn-primary" href={{ "task/" + task.id|string }}>Edit task</a>
                             </div>
                         </div>
                     </div>

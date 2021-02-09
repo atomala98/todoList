@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box
+} 
+
 body { 
     font-family: 'Montserrat', sans-serif;
     overflow-y:scroll;
@@ -14,4 +18,8 @@ body {
 
 .form-item {
     flex: 1;
+}
+
+button {
+    display: block;
 }

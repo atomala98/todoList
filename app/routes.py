@@ -91,6 +91,7 @@ def completed(id):
         task.is_completed = not task.is_completed
         db.session.commit()
         return redirect(url_for('menu'))
+    return redirect(url_for('menu'))
 
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
@@ -138,12 +139,34 @@ def task(id):
     task = Task.query.filter_by(id=int(id)).first()
     sub_form = SubtaskForm()
     if description_form.submit1.data and description_form.validate_on_submit():
-        print(description_form.description.data)
         task.description = description_form.description.data
         db.session.commit()
         return redirect(url_for('menu'))
     if sub_form.submit2.data and sub_form.validate_on_submit():
-        subtask = Subtask(task=sub_form.subtask.data, main_task=task)
-        db.session.add(task)
-        db.session.commit()
+        if len(task.subtasks.all()) < 5:
+            subtask = Subtask(task=sub_form.subtask.data, main_task=task)
+            db.session.add(task)
+            db.session.commit()
+        else:
+            flash("More than 5 subtasks!")
     return render_template('task.html', task=task, form=description_form, sub_form=sub_form)
+
+
+@app.route('/delete/<id>/<sub_id>', methods=['GET', 'POST'])
+def delete_sub(id, sub_id):
+    if Subtask.query.filter_by(id=int(sub_id)).first():
+        subtask = Subtask.query.filter_by(id=int(sub_id)).first()
+        db.session.delete(subtask)
+        db.session.commit()
+        return redirect(url_for('task', id=id))
+    return redirect(url_for('menu'))
+
+
+@app.route('/change_status/<id>/<sub_id>', methods=['GET', 'POST'])
+def completed_sub(id, sub_id):
+    if Subtask.query.filter_by(id=int(sub_id)).first():
+        subtask = Subtask.query.filter_by(id=int(sub_id)).first()
+        subtask.is_completed = not subtask.is_completed
+        db.session.commit()
+        return redirect(url_for('task', id=id))
+    return redirect(url_for('menu'))
