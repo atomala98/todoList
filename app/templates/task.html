@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Task {{ task.task }} {% endblock %}
+{% block start %}Task: {{ task.task }} {% endblock %}
+{% block body %}
+    <div class="row">
+        <form action="" method="post" class="col-6">
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.description.label }}<br>
+                    <textarea class="form-control" id="description" name="description" required rows="12">{{task.description}}</textarea>
+                </p>
+                <p>
+                    {{ form.submit1(class_="btn btn-primary") }}
+                </p>
+            </form>
+    </div>
+{% endblock %} 

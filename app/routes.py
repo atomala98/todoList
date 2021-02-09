@@ -1,7 +1,7 @@
 from app import app, db
 from flask import render_template, redirect, url_for, flash, request
-from app.forms import LoginForm, RegisterForm, TaskForm, FilterForm, ResetPasswordForm, ChangePasswordForm
-from flask_login import current_user, login_user, logout_user
+from app.forms import LoginForm, RegisterForm, TaskForm, FilterForm, ResetPasswordForm, ChangePasswordForm, TaskDescriptionForm
+from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Task
 from datetime import datetime
 from app.mails import send_password_reset_email, send_auth_email
@@ -25,6 +25,7 @@ def index():
     return render_template('index.html', form=form)
 
 
+@login_required
 @app.route('/logout')
 def logout():
     logout_user()
@@ -55,6 +56,7 @@ def register():
     return render_template('register.html', form=form)
 
 
+@login_required
 @app.route('/menu', methods=['GET', 'POST'])
 def menu():
     task_form = TaskForm()
@@ -71,6 +73,7 @@ def menu():
     return render_template('menu.html', user = current_user, form=task_form, filter_form=filter_form, tasks=tasks, date=datetime.now())
 
 
+@login_required
 @app.route('/delete/<id>', methods=['GET', 'POST'])
 def delete(id):
     if Task.query.filter_by(id=int(id)).first():
@@ -80,6 +83,7 @@ def delete(id):
         return redirect(url_for('menu'))
 
 
+@login_required
 @app.route('/change_status/<id>', methods=['GET', 'POST'])
 def completed(id):
     if Task.query.filter_by(id=int(id)).first():
@@ -125,3 +129,16 @@ def auth(token):
     user.authenticated = True
     db.session.commit()
     return redirect(url_for('index'))
+
+
+@login_required
+@app.route('/task/<id>', methods=['GET', 'POST'])
+def task(id):
+    description_form = TaskDescriptionForm()
+    task = Task.query.filter_by(id=int(id)).first()
+    if description_form.submit1.data and description_form.validate_on_submit():
+        print(description_form.description.data)
+        task.description = description_form.description.data
+        db.session.commit()
+        return redirect(url_for('menu'))
+    return render_template('task.html', task=task, form=description_form)

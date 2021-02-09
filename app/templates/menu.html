@@ -79,9 +79,31 @@
                             </button>
                         </div>
                     </div>
-                    <div id={{ "collapse" + task.id|string }} class="collapse show" aria-labelledby={{ "task" + task.id|string }} data-parent="#acc">
+                    <div id={{ "collapse" + task.id|string }} class="collapse show" aria-labelledby={{ "task" + task.id|string }} data-parent="#acc">                        
                         <div class="card-body">
-                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            <div class="container">
+                                <p>
+                                    {% if task.description %}
+                                    {{ task.description }}
+                                    {% else %}
+                                    Add description to a task!
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="container">
+                                <p>
+                                    {% if task.subtasks.first() %}
+                                        {% for task in task.subtasks %}
+                                            {{task.task}}
+                                        {% endfor %}
+                                    {% else %}
+                                    Add subtasks to a task!
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="container">
+                                <a href={{ "task/" + task.id|string }}>Edit</a>
+                            </div>
                         </div>
                     </div>
                 </div>
