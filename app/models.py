@@ -5,13 +5,23 @@ from flask_login import UserMixin
 import jwt
 from time import time 
 
+group_association_table = db.Table('association', db.Model.metadata,
+    db.Column('left_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('right_id', db.Integer, db.ForeignKey('group.id'))
+)
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(64), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     tasks = db.relationship('Task', backref='author', lazy='dynamic')
+    messages = db.relationship('Message', backref='receiver', lazy='dynamic')
     authenticated = db.Column(db.Boolean, index=True, default=False)
+    groups = db.relationship(
+        'Group',
+        secondary=group_association_table,
+        back_populates="users")
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -75,3 +85,18 @@ class Subtask(db.Model):
     task = db.Column(db.String(140))
     is_completed = db.Column(db.Boolean, default=False)
     task_id = db.Column(db.Integer, db.ForeignKey('task.id'))
+    
+    
+class Group(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    users = db.relationship(
+        "User",
+        secondary=group_association_table,
+        back_populates="groups")
+
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    author = db.Column(db.String(40))
+    text = db.Column(db.String(500))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

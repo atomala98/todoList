@@ -57,6 +57,17 @@ def register():
 
 
 @login_required
+@app.route('/groups', methods=['GET', 'POST'])
+def groups():
+    return render_template('groups.html')
+
+
+@login_required
+@app.route('/messages')
+def messages():
+    return render_template('messages.html')
+
+@login_required
 @app.route('/menu', methods=['GET', 'POST'])
 def menu():
     task_form = TaskForm()
