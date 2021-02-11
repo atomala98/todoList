@@ -2,4 +2,26 @@
 {% block title %}Messages{% endblock %}
 {% block start %}Messages{% endblock %}
 {% block body %}
+    <div class="container row">
+        <div class="container col-2">
+            <form class="col-4 form-temp mt-3" action="/create_message">
+                <button type="submit" class="btn btn-primary form-item">Create Message</button>
+            </form>
+        </div>
+        <div class="container col-10 mt-3">
+            {% if current_user.messages %}
+                {% for message in current_user.messages %}
+                    <div class="container border rounded mb-2">
+                        <h4 class="mt-2">{{ message.author }}</h4>
+                        <p class="mt-4">{{ message.text }}</p>
+                        <p>Time send: {{ message.timestamp.strftime("%Y-%m-%d %H:%M") }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="container m-auto">
+                    You have no messages!
+                </div>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

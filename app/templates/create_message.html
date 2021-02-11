@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Create Message{% endblock %}
+{% block start %}Create Message{% endblock %}
+{% block body %}
+    <div class="container">
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.receiver.label }}<br>
+                {{ form.receiver(class_="form-control") }}
+            </p>
+            <p>
+                {{ form.message.label }}<br>
+                {{ form.message(class_="form-control", rows="12") }}
+            </p>
+            <p>
+                {{ form.submit(class_="btn btn-success") }}
+            </p>
+        </form>
+        <div>
+            <a href="/messages" class="btn btn-primary">Go back to messages</a>
+        </div>
+    </div>
+{% endblock %}

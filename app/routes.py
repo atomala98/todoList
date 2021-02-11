@@ -1,8 +1,8 @@
 from app import app, db
 from flask import render_template, redirect, url_for, flash, request
-from app.forms import SubtaskForm, LoginForm, RegisterForm, TaskForm, FilterForm, ResetPasswordForm, ChangePasswordForm, TaskDescriptionForm
+from app.forms import SubtaskForm, LoginForm, RegisterForm, TaskForm, FilterForm, ResetPasswordForm, ChangePasswordForm, TaskDescriptionForm, CreateMessageForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User, Task, Subtask
+from app.models import User, Task, Subtask, Group, Message
 from datetime import datetime
 from app.mails import send_password_reset_email, send_auth_email
 
@@ -67,6 +67,19 @@ def groups():
 def messages():
     return render_template('messages.html')
 
+
+@login_required
+@app.route('/create_message', methods=['GET', 'POST'])
+def create_message():
+    form = CreateMessageForm()
+    if form.validate_on_submit():
+        message = Message(author=current_user.username, text=form.message.data, receiver=User.query.filter_by(username=form.receiver.data).first())
+        db.session.add(message)
+        db.session.commit()
+        return redirect(url_for('messages'))
+    return render_template('create_message.html', form=form)
+
+
 @login_required
 @app.route('/menu', methods=['GET', 'POST'])
 def menu():
@@ -78,10 +91,10 @@ def menu():
         db.session.add(task)
         db.session.commit()
         tasks = current_user.get_tasks()
-        return redirect('menu')
+        return redirect(url_for('menu'))
     if filter_form.submit2.data and filter_form.validate_on_submit():
         tasks = current_user.get_tasks_filtered(filter_form.sort_by.data, filter_form.filter_by.data)
-    return render_template('menu.html', user = current_user, form=task_form, filter_form=filter_form, tasks=tasks, date=datetime.now())
+    return render_template('menu.html', user=current_user, form=task_form, filter_form=filter_form, tasks=tasks, date=datetime.now())
 
 
 @login_required

@@ -47,13 +47,19 @@ class ChangePasswordForm(FlaskForm):
     password2 = PasswordField('Repeat password', validators=[EqualTo("password")])
     submit = SubmitField('Reset password')
     
+    
 class TaskDescriptionForm(FlaskForm):
     task = StringField('Task', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
     submit1 = SubmitField('Change description')
+    
     
 class SubtaskForm(FlaskForm):
     subtask = StringField('Subtask', validators=[DataRequired()])
     submit2 = SubmitField('Add subtask')
     
     
+class CreateMessageForm(FlaskForm):
+    receiver = StringField('Receiver', validators=[DataRequired()])
+    message = TextAreaField('Message', validators=[DataRequired()])
+    submit = SubmitField('Send a message')

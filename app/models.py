@@ -99,4 +99,5 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     author = db.Column(db.String(40))
     text = db.Column(db.String(500))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
