@@ -16,7 +16,8 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     tasks = db.relationship('Task', backref='author', lazy='dynamic')
-    messages = db.relationship('Message', backref='receiver', lazy='dynamic')
+    sent_messages = db.relationship('Message', backref="sender", lazy='dynamic', foreign_keys='Message.sender_id')
+    messages = db.relationship('Message', backref="receiver", lazy='dynamic', foreign_keys='Message.receiver_id')
     authenticated = db.Column(db.Boolean, index=True, default=False)
     groups = db.relationship(
         'Group',
@@ -97,7 +98,8 @@ class Group(db.Model):
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    author = db.Column(db.String(40))
     text = db.Column(db.String(500))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.now())
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    

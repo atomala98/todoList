@@ -73,7 +73,8 @@ def messages():
 def create_message():
     form = CreateMessageForm()
     if form.validate_on_submit():
-        message = Message(author=current_user.username, text=form.message.data, receiver=User.query.filter_by(username=form.receiver.data).first())
+        text = form.message.data.replace('\n', '<br>')
+        message = Message(sender=current_user, text=text, receiver=User.query.filter_by(username=form.receiver.data).first())
         db.session.add(message)
         db.session.commit()
         return redirect(url_for('messages'))
