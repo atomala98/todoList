@@ -63,3 +63,9 @@ class CreateMessageForm(FlaskForm):
     receiver = StringField('Receiver', validators=[DataRequired()])
     message = TextAreaField('Message', validators=[DataRequired()])
     submit = SubmitField('Send a message')
+    
+    
+class MessageFilterForm(FlaskForm):
+    sort_by = SelectField('Sort by', choices=['Newest', 'Oldest'], validators=[])
+    filter_by = SelectField('Filter by', choices=['Received', 'Sent', "All"], validators=[])
+    submit = SubmitField('Filter')

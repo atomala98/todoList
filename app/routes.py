@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, redirect, url_for, flash, request
-from app.forms import SubtaskForm, LoginForm, RegisterForm, TaskForm, FilterForm, ResetPasswordForm, ChangePasswordForm, TaskDescriptionForm, CreateMessageForm
+from app.forms import SubtaskForm, LoginForm, RegisterForm, TaskForm, FilterForm, ResetPasswordForm, ChangePasswordForm, TaskDescriptionForm, CreateMessageForm, MessageFilterForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Task, Subtask, Group, Message
 from datetime import datetime
@@ -63,9 +63,13 @@ def groups():
 
 
 @login_required
-@app.route('/messages')
+@app.route('/messages', methods=['GET', 'POST'])
 def messages():
-    return render_template('messages.html')
+    form = MessageFilterForm()
+    msg = current_user.get_messages()
+    if form.validate_on_submit():
+        msg = current_user.get_messages_filtered(form.sort_by.data, form.filter_by.data)
+    return render_template('messages.html', form=form, messages=msg)
 
 
 @login_required
@@ -79,6 +83,15 @@ def create_message():
         db.session.commit()
         return redirect(url_for('messages'))
     return render_template('create_message.html', form=form)
+
+@login_required
+@app.route('/delete_message/<id>', methods=['GET', 'POST'])
+def delete_message(id):
+    if Message.query.filter_by(id=id).first():
+        msg = Message.query.filter_by(id=id).first()
+        db.session.delete(msg)
+        db.session.commit()
+        return redirect(url_for('messages'))
 
 
 @login_required

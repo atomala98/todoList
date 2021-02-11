@@ -42,8 +42,23 @@ class User(UserMixin, db.Model):
             tasks = Task.query.filter_by(user_id=self.id, is_completed=False)
         if sort_by == "Date Created":
             return tasks.order_by(Task.timestamp)
-        return tasks.order_by(Task.deadline)        
+        return tasks.order_by(Task.deadline)
     
+    def get_messages(self):
+        return Message.query.filter_by(receiver_id=self.id).order_by(Message.timestamp.desc())
+    
+    def get_messages_filtered(self, sort_by, filter_by):
+        if filter_by == "Received":
+            msg = Message.query.filter_by(receiver_id=self.id)
+        elif filter_by == "Sent":
+            msg = Message.query.filter_by(sender_id=self.id)
+        else:
+            msg = Message.query.filter((Message.receiver_id==self.id) | (Message.sender_id==self.id))
+        if sort_by == "Newest":
+            return msg.order_by(Message.timestamp.desc())
+        return msg.order_by(Message.timestamp)
+        
+            
     def get_token(self, expires_in=600):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
