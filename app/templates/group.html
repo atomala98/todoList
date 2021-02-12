@@ -17,8 +17,6 @@
                     </p>
                 </div>
             </form>
-        </div>
-        <div class="container col-10 mt-3">
             <div class="container border rounded mb-2">
                 <div class="row mt-3">
                     <p class="mt-2">
@@ -30,6 +28,99 @@
                         {% endfor %}
                     </p>
                 </div>
+            </div>
+        </div>
+        <div class="container col-10 mt-3">
+            <div class="row">
+                {{ task_form.csrf_token }}
+                <p class="col-7">
+                    {{ task_form.task.label }}
+                    {{ task_form.task(class_="form-control") }}
+                </p>
+                <p class="col-4">
+                    {{ task_form.deadline.label }}
+                    {{ task_form.deadline(class_="form-control date-input", type="datetime-local") }}
+                    {% for errors in task_form.deadline.errors %}
+                        {{ errors }}
+                    {% endfor %}
+                </p>
+                <p class="col-1">
+                    {{ task_form.submit1(class_="btn btn-success mt-4") }}
+                </p>
+            </div>
+            <div class="tasks">
+                <div class="accordion" id="acc">
+                    {% for task in tasks %}
+                        <div class="accordion-item p-2 mt-2 mb-2 border rounded">
+                            <div class="accordion-header row" id={{ "task" + task.id|string }}>
+                                <div class="col-8 h4 my-auto">
+                                    {% if task.is_completed %}
+                                        <s>{{ task.task }}</s>
+                                    {% else %} 
+                                        {{ task.task }}
+                                    {% endif %}
+                                </div>
+                                <div class="col-2 my-auto">
+                                    <div class="date">
+                                        Posted: {{ task.timestamp.strftime("%Y-%m-%d %H:%M:%S") }}
+                                    </div>
+                                    {% if task.deadline.timestamp() - task.timestamp.timestamp() < 0 %}
+                                        <div class="date text-danger">
+                                            Deadline: {{ task.deadline }}
+                                        </div>
+                                    {% else %}
+                                        <div class="date" color="red">
+                                            Deadline: {{ task.deadline }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-2 row">
+                                    <form class="col-4 form-temp" action={{ "/change_status/" + task.id|string }}>
+                                        {% if task.is_completed %}
+                                            <button type="submit" class="btn btn-warning form-item h-100"><i class="fas fa-times"></i></button>
+                                        {% else %}
+                                            <button type="submit" class="btn btn-success form-item h-100"><i class="fas fa-check"></i></button>
+                                        {% endif %}
+                                    </form>
+                                    <form class="col-4 form-temp" action={{ "/delete/" + task.id|string }}>
+                                        <button type="submit" class="btn btn-danger w-100 h-100 form-item"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                    <button class="btn btn-primary col-4" type="button" data-toggle="collapse" data-target={{ "#collapse" + task.id|string }} aria-expanded="false" aria-controls={{ "collapse" + task.id|string }}>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id={{ "collapse" + task.id|string }} class="collapse" aria-labelledby={{ "task" + task.id|string }} data-parent="#acc">                        
+                                <div class="card-body">
+                                    <div class="container">
+                                        <p>
+                                            {% if task.description %}
+                                            {{ task.description }}
+                                            {% else %}
+                                            Add description to a task!
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="container">
+                                        <p>
+                                            {% if task.subtasks.first() %}
+                                                <h6 class="mb-3">Subtasks:</h6>
+                                                {% for task in task.subtasks %}
+                                                    <p class="border rounded p-2">{{task.task}}</p>
+                                                {% endfor %}
+                                            {% else %}
+                                            Add subtasks to a task!
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="container">
+                                        <a class="btn btn-primary" href={{ "task/" + task.id|string }}>Edit task</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>

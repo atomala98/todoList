@@ -71,7 +71,9 @@ def groups():
 @app.route('/group/<id>', methods=['GET', 'POST'])
 def group(id):
     form = GroupInvititionsForm()
+    task_form = TaskForm()
     group = Group.query.filter_by(id=id).first()
+    tasks = group.tasks
     if form.validate_on_submit():
         receiver = User.query.filter_by(username=form.name.data).first()
         text = render_template("invitation/msg.html", group=group, sender=current_user, receiver=receiver)
@@ -79,7 +81,7 @@ def group(id):
         db.session.add(message)
         db.session.commit()
         return redirect(url_for('group', id=id))
-    return render_template('group.html', form=form, group=group)
+    return render_template('group.html', form=form, group=group, tasks=tasks, task_form=task_form)
 
 @login_required
 @app.route('/group_invite/<group_id>/<user_id>')
