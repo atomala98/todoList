@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}User {{ user.username }} {% endblock %}
+{% block start %}User {{ user.username }} {% endblock %}
+{% block body %}
+    <div class="container row">
+        <form class="col-4 form-temp mt-3" action="/create_message">
+            <input type="submit" class="btn btn-primary btn-block" value='Create Message'></input>
+        </form>
+    </div>
+{% endblock %}

@@ -24,6 +24,11 @@ def index():
         return redirect(url_for('menu'))
     return render_template('index.html', form=form)
 
+@login_required
+@app.route('/user/<id>')
+def user(id):
+    user = User.query.filter_by(id=id).first()
+    return render_template('user.html', user=user)
 
 @login_required
 @app.route('/logout')
