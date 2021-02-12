@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, redirect, url_for, flash, request
-from app.forms import SubtaskForm, LoginForm, RegisterForm, TaskForm, FilterForm, ResetPasswordForm, ChangePasswordForm, TaskDescriptionForm, CreateMessageForm, MessageFilterForm
+from app.forms import SubtaskForm, LoginForm, RegisterForm, TaskForm, FilterForm, ResetPasswordForm, ChangePasswordForm, TaskDescriptionForm, CreateMessageForm, MessageFilterForm, CreateGroupForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Task, Subtask, Group, Message
 from datetime import datetime
@@ -59,7 +59,20 @@ def register():
 @login_required
 @app.route('/groups', methods=['GET', 'POST'])
 def groups():
-    return render_template('groups.html')
+    groups = current_user.groups
+    return render_template('groups.html', groups=groups)
+
+
+@login_required
+@app.route('/create_group', methods=['GET', 'POST'])
+def create_group():
+    form = CreateGroupForm()
+    if form.validate_on_submit():
+        grp = Group(name=form.name.data)
+        grp.add_user(current_user)
+        db.session.commit()
+        return redirect(url_for('groups'))
+    return render_template('create_group.html', form=form)
 
 
 @login_required

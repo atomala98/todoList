@@ -5,7 +5,7 @@ from flask_login import UserMixin
 import jwt
 from time import time 
 
-group_association_table = db.Table('association', db.Model.metadata,
+group_table = db.Table('association', db.Model.metadata,
     db.Column('left_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('right_id', db.Integer, db.ForeignKey('group.id'))
 )
@@ -21,7 +21,7 @@ class User(UserMixin, db.Model):
     authenticated = db.Column(db.Boolean, index=True, default=False)
     groups = db.relationship(
         'Group',
-        secondary=group_association_table,
+        secondary=group_table,
         back_populates="users")
     
     def set_password(self, password):
@@ -105,10 +105,17 @@ class Subtask(db.Model):
     
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
     users = db.relationship(
         "User",
-        secondary=group_association_table,
+        secondary=group_table,
         back_populates="groups")
+
+    def add_user(self, user):
+        self.users.append(user)
+        
+    def remove_user(self, user):
+        self.users.remove(user)
 
 
 class Message(db.Model):
