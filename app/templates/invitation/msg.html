@@ -1,0 +1,7 @@
+<p>Dear {{ receiver.username }},</p>
+<p>
+    User {{ sender.username }} invited you to a group.
+    <a href="{{ url_for('group_invite', group_id=group.id, user_id=receiver.id) }}">
+        Click here
+    </a> to join.
+</p>

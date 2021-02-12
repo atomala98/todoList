@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, redirect, url_for, flash, request
-from app.forms import SubtaskForm, LoginForm, RegisterForm, TaskForm, FilterForm, ResetPasswordForm, ChangePasswordForm, TaskDescriptionForm, CreateMessageForm, MessageFilterForm, CreateGroupForm
+from app.forms import SubtaskForm, LoginForm, RegisterForm, TaskForm, FilterForm, ResetPasswordForm, ChangePasswordForm, TaskDescriptionForm, CreateMessageForm, MessageFilterForm, CreateGroupForm, GroupInvititionsForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Task, Subtask, Group, Message
 from datetime import datetime
@@ -57,10 +57,32 @@ def register():
 
 
 @login_required
-@app.route('/groups', methods=['GET', 'POST'])
+@app.route('/groups')
 def groups():
     groups = current_user.groups
     return render_template('groups.html', groups=groups)
+
+@login_required
+@app.route('/group/<id>', methods=['GET', 'POST'])
+def group(id):
+    form = GroupInvititionsForm()
+    group = Group.query.filter_by(id=id).first()
+    if form.validate_on_submit():
+        receiver = User.query.filter_by(username=form.name.data).first()
+        text = render_template("invitation/msg.html", group=group, sender=current_user, receiver=receiver)
+        message = Message(sender=current_user, text=text, receiver=receiver)        
+        db.session.add(message)
+        db.session.commit()
+        return redirect(url_for('group', id=id))
+    return render_template('group.html', form=form, group=group)
+
+@login_required
+@app.route('/group_invite/<group_id>/<user_id>')
+def group_invite(group_id, user_id):
+    grp = Group.query.filter_by(id=group_id).first()
+    grp.add_user(User.query.filter_by(id=user_id).first())
+    db.session.commit()
+    return redirect(url_for('group', id=group_id))
 
 
 @login_required

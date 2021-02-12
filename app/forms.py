@@ -74,3 +74,8 @@ class MessageFilterForm(FlaskForm):
 class CreateGroupForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     submit = SubmitField('Create Group')
+    
+    
+class GroupInvititionsForm(FlaskForm):
+    name = StringField('Username', validators=[DataRequired()])
+    submit = SubmitField('Invite')

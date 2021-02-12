@@ -13,7 +13,7 @@
                 {% for group in groups %}
                     <div class="container border rounded mb-2">
                         <div class="row mt-3">
-                            <h4 class="col-11">{{ group.name }}</h4>
+                            <a href={{ "/group/" + group.id|string }} class="col-11 h4">{{ group.name }}</a>
                             <p class="mt-3">
                                 Users in group:<br>
                                 {% for user in group.users %}
