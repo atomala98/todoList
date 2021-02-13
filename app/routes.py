@@ -179,8 +179,11 @@ def menu():
 def delete(id):
     if Task.query.filter_by(id=int(id)).first():
         task = Task.query.filter_by(id=int(id)).first()
+        group = task.group
         db.session.delete(task)
         db.session.commit()
+        if group:
+            return redirect(url_for('group', id=group.id))
         return redirect(url_for('menu'))
 
 
@@ -191,6 +194,8 @@ def completed(id):
         task = Task.query.filter_by(id=int(id)).first()
         task.is_completed = not task.is_completed
         db.session.commit()
+        if task.group:
+            return redirect(url_for('group', id=task.group.id))
         return redirect(url_for('menu'))
     return redirect(url_for('menu'))
 
@@ -242,6 +247,8 @@ def task(id):
     if description_form.submit1.data and description_form.validate_on_submit():
         task.description = description_form.description.data
         db.session.commit()
+        if task.group:
+            return redirect(url_for('group', id=task.group.id))
         return redirect(url_for('menu'))
     if sub_form.submit2.data and sub_form.validate_on_submit():
         if len(task.subtasks.all()) < 5:

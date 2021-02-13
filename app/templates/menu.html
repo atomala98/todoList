@@ -44,9 +44,9 @@
                     <div class="accordion-header row" id={{ "task" + task.id|string }}>
                         <div class="col-8 h4 my-auto">
                             {% if task.is_completed %}
-                                <s>{{ task.task }}</s>
+                                <s class="container">{{ task.task }}</s>
                             {% else %} 
-                                {{ task.task }}
+                                <div class="container">{{ task.task }}</div>
                             {% endif %}
                         </div>
                         <div class="col-2 my-auto">

@@ -57,9 +57,9 @@
                             <div class="accordion-header row" id={{ "task" + task.id|string }}>
                                 <div class="col-6 h4 my-auto">
                                     {% if task.is_completed %}
-                                        <s>{{ task.task }}</s>
+                                        <s class="container">{{ task.task }}</s>
                                     {% else %} 
-                                        {{ task.task }}
+                                        <div class="container">{{ task.task }}</div>
                                     {% endif %}
                                 </div>
                                 <div class="col-3 my-auto">
@@ -116,7 +116,7 @@
                                         </p>
                                     </div>
                                     <div class="container">
-                                        <a class="btn btn-primary" href={{ "task/" + task.id|string }}>Edit task</a>
+                                        <a class="btn btn-primary" href={{ "../task/" + task.id|string }}>Edit task</a>
                                     </div>
                                 </div>
                             </div>
