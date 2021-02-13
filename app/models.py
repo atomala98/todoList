@@ -112,6 +112,7 @@ class Group(db.Model):
         "User",
         secondary=group_table,
         back_populates="groups")
+    admin_id = db.Column(db.Integer)
     tasks = db.relationship('Task', backref='group', lazy='dynamic')
     
 

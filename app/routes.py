@@ -112,7 +112,7 @@ def group_invite(group_id, user_id):
 def create_group():
     form = CreateGroupForm()
     if form.validate_on_submit():
-        grp = Group(name=form.name.data)
+        grp = Group(name=form.name.data, admin_id=current_user.id)
         grp.add_user(current_user)
         db.session.commit()
         return redirect(url_for('groups'))
@@ -277,4 +277,17 @@ def completed_sub(id, sub_id):
         subtask.is_completed = not subtask.is_completed
         db.session.commit()
         return redirect(url_for('task', id=id))
+    return redirect(url_for('menu'))
+
+
+@app.route('/group_delete/<id>', methods=['GET', 'POST'])
+def group_delete(id):
+    if Group.query.filter_by(id=id).first():
+        group = Group.query.filter_by(id=id).first()
+        if group.admin_id == current_user.id:
+            db.session.delete(group)
+            db.session.commit()
+            return redirect(url_for('groups'))
+        else:
+            flash("You are not group owner!")
     return redirect(url_for('menu'))
