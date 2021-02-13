@@ -10,6 +10,7 @@ group_table = db.Table('association', db.Model.metadata,
     db.Column('right_id', db.Integer, db.ForeignKey('group.id'))
 )
 
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)

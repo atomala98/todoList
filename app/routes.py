@@ -158,6 +158,8 @@ def delete_message(id):
 @login_required
 @app.route('/menu', methods=['GET', 'POST'])
 def menu():
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
     task_form = TaskForm()
     filter_form = FilterForm()
     tasks = current_user.get_tasks()
