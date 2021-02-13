@@ -31,36 +31,38 @@
             </div>
         </div>
         <div class="container col-10 mt-3">
-            <div class="row">
-                {{ task_form.csrf_token }}
-                <p class="col-7">
-                    {{ task_form.task.label }}
-                    {{ task_form.task(class_="form-control") }}
-                </p>
-                <p class="col-4">
-                    {{ task_form.deadline.label }}
-                    {{ task_form.deadline(class_="form-control date-input", type="datetime-local") }}
-                    {% for errors in task_form.deadline.errors %}
-                        {{ errors }}
-                    {% endfor %}
-                </p>
-                <p class="col-1">
-                    {{ task_form.submit1(class_="btn btn-success mt-4") }}
-                </p>
-            </div>
+            <form action="" method="POST" class="add-task">
+                <div class="row">
+                    {{ task_form.csrf_token }}
+                    <p class="col-7">
+                        {{ task_form.task.label }}
+                        {{ task_form.task(class_="form-control") }}
+                    </p>
+                    <p class="col-4">
+                        {{ task_form.deadline.label }}
+                        {{ task_form.deadline(class_="form-control date-input", type="datetime-local") }}
+                        {% for errors in task_form.deadline.errors %}
+                            {{ errors }}
+                        {% endfor %}
+                    </p>
+                    <p class="col-1">
+                        {{ task_form.submit1(class_="btn btn-success mt-4") }}
+                    </p>
+                </div>
+            </form>
             <div class="tasks">
                 <div class="accordion" id="acc">
                     {% for task in tasks %}
                         <div class="accordion-item p-2 mt-2 mb-2 border rounded">
                             <div class="accordion-header row" id={{ "task" + task.id|string }}>
-                                <div class="col-8 h4 my-auto">
+                                <div class="col-6 h4 my-auto">
                                     {% if task.is_completed %}
                                         <s>{{ task.task }}</s>
                                     {% else %} 
                                         {{ task.task }}
                                     {% endif %}
                                 </div>
-                                <div class="col-2 my-auto">
+                                <div class="col-3 my-auto">
                                     <div class="date">
                                         Posted: {{ task.timestamp.strftime("%Y-%m-%d %H:%M:%S") }}
                                     </div>
@@ -74,7 +76,7 @@
                                         </div>
                                     {% endif %}
                                 </div>
-                                <div class="col-2 row">
+                                <div class="col-3 row">
                                     <form class="col-4 form-temp" action={{ "/change_status/" + task.id|string }}>
                                         {% if task.is_completed %}
                                             <button type="submit" class="btn btn-warning form-item h-100"><i class="fas fa-times"></i></button>

@@ -74,12 +74,18 @@ def group(id):
     task_form = TaskForm()
     group = Group.query.filter_by(id=id).first()
     tasks = group.tasks
-    if form.validate_on_submit():
+    if form.submit.data and form.validate_on_submit():
         receiver = User.query.filter_by(username=form.name.data).first()
         text = render_template("invitation/msg.html", group=group, sender=current_user, receiver=receiver)
         message = Message(sender=current_user, text=text, receiver=receiver)        
         db.session.add(message)
         db.session.commit()
+        return redirect(url_for('group', id=id))
+    if task_form.submit1.data and task_form.validate_on_submit():
+        task = Task(task=task_form.task.data, deadline=task_form.deadline.data, group=group)
+        db.session.add(task)
+        db.session.commit()
+        tasks = group.tasks
         return redirect(url_for('group', id=id))
     return render_template('group.html', form=form, group=group, tasks=tasks, task_form=task_form)
 
