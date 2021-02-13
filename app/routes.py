@@ -76,11 +76,16 @@ def group(id):
     tasks = group.tasks
     if form.submit.data and form.validate_on_submit():
         receiver = User.query.filter_by(username=form.name.data).first()
-        text = render_template("invitation/msg.html", group=group, sender=current_user, receiver=receiver)
-        message = Message(sender=current_user, text=text, receiver=receiver)        
-        db.session.add(message)
-        db.session.commit()
-        return redirect(url_for('group', id=id))
+        if receiver and receiver not in group.users:
+            text = render_template("invitation/msg.html", group=group, sender=current_user, receiver=receiver)
+            message = Message(sender=current_user, text=text, receiver=receiver)        
+            db.session.add(message)
+            db.session.commit()
+            return redirect(url_for('group', id=id))
+        elif not receiver:
+            flash(("User {} does not exist.").format(form.name.data))
+        else:
+            flash(("User {} already in group.").format(form.name.data))
     if task_form.submit1.data and task_form.validate_on_submit():
         task = Task(task=task_form.task.data, deadline=task_form.deadline.data, group=group)
         db.session.add(task)
@@ -93,9 +98,13 @@ def group(id):
 @app.route('/group_invite/<group_id>/<user_id>')
 def group_invite(group_id, user_id):
     grp = Group.query.filter_by(id=group_id).first()
-    grp.add_user(User.query.filter_by(id=user_id).first())
-    db.session.commit()
-    return redirect(url_for('group', id=group_id))
+    if grp:
+        grp.add_user(User.query.filter_by(id=user_id).first())
+        db.session.commit()
+        return redirect(url_for('group', id=group_id))
+    else:
+        flash(('Group does not exist'))
+        return redirect(url_for('groups', id=group_id))
 
 
 @login_required
@@ -125,11 +134,15 @@ def messages():
 def create_message():
     form = CreateMessageForm()
     if form.validate_on_submit():
-        text = form.message.data.replace('\n', '<br>')
-        message = Message(sender=current_user, text=text, receiver=User.query.filter_by(username=form.receiver.data).first())
-        db.session.add(message)
-        db.session.commit()
-        return redirect(url_for('messages'))
+        receiver = User.query.filter_by(username=form.receiver.data).first()
+        if receiver:
+            text = form.message.data.replace('\n', '<br>')
+            message = Message(sender=current_user, text=text, receiver=User.query.filter_by(username=form.receiver.data).first())
+            db.session.add(message)
+            db.session.commit()
+            return redirect(url_for('messages'))
+        else:
+            flash(("User {} does not exist.").format(form.receiver.data))
     return render_template('create_message.html', form=form)
 
 @login_required
