@@ -291,3 +291,16 @@ def group_delete(id):
         else:
             flash("You are not group owner!")
     return redirect(url_for('menu'))
+
+@app.route('/delete_from_group/<id>/<group_id>', methods=['GET', 'POST'])
+def delete_from_group(id, group_id):
+    if Group.query.filter_by(id=group_id).first() and User.query.filter_by(id=id).first():
+        user = User.query.filter_by(id=id).first()
+        group = Group.query.filter_by(id=group_id).first()
+        if group.admin_id == current_user.id and user in group.users:
+            group.remove_user(user)
+            db.session.commit()
+            return redirect(url_for('group', id=group_id))
+        else:
+            flash("You have no permissions to delete user from group!")
+    return redirect(url_for('menu'))

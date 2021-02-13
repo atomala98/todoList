@@ -23,7 +23,16 @@
                         Users in group:
                         {% for user in group.users %}
                             <div class="mt-2">
-                                {{ user.username }}
+                                <div class="row">
+                                        <div class="col-9">{{ user.username }}</div>
+                                        <div class="col-3">
+                                            {% if current_user.id == group.admin_id and user.id != group.admin_id %}
+                                                <form action="{{ url_for("delete_from_group", id=user.id, group_id=group.id) }}" method="POST">
+                                                    <button type="submit" class="btn btn-danger btn-sm">x</button>
+                                                </form>
+                                            {% endif %}
+                                        </div>
+                                </div>
                             </div>
                         {% endfor %}
                     </p>
