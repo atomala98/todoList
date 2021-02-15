@@ -76,6 +76,10 @@ def group(id):
         return redirect(url_for('index'))
     group = Group.query.filter_by(id=id).first()
     if not group:
+        flash("Group does not exist.")
+        return redirect(url_for('groups'))
+    if current_user not in group.users:
+        flash("You are not in this group.")
         return redirect(url_for('menu'))
     form = GroupInvititionsForm()
     task_form = TaskForm()
@@ -100,19 +104,20 @@ def group(id):
         return redirect(url_for('group', id=id))
     return render_template('group.html', form=form, group=group, tasks=tasks, task_form=task_form)
 
+
 @login_required
 @app.route('/group_invite/<group_id>/<user_id>')
 def group_invite(group_id, user_id):
-    if not current_user.is_authenticated:
-        return redirect(url_for('index'))
     group = Group.query.filter_by(id=group_id).first()
-    if group:
-        group.add_user(User.query.filter_by(id=user_id).first())
-        db.session.commit()
-        return redirect(url_for('group', id=group_id))
-    else:
-        flash(('Group does not exist'))
-        return redirect(url_for('groups', id=group_id))
+    if not group:
+        flash(('Group does not exist.'))
+        return redirect(url_for('groups'))
+    if current_user.id != group.admin_id:
+        flash(('You are not admin of group.'))
+        return redirect(url_for('groups'))
+    group.add_user(User.query.filter_by(id=user_id).first())
+    db.session.commit()
+    return redirect(url_for('group', id=group_id))
 
 
 @login_required
@@ -164,7 +169,10 @@ def create_message():
 def delete_message(id):
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
-    if Message.query.filter_by(id=id).first():
+    message = Message.query.filter_by(id=id).first()
+    if message.receiver_id != current_user.id:
+        return redirect(url_for('menu'))
+    if message:
         msg = Message.query.filter_by(id=id).first()
         db.session.delete(msg)
         db.session.commit()
