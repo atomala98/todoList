@@ -174,32 +174,6 @@ def menu():
     return render_template('menu.html', user=current_user, form=task_form, filter_form=filter_form, tasks=tasks, date=datetime.now())
 
 
-@login_required
-@app.route('/delete/<id>', methods=['GET', 'POST'])
-def delete(id):
-    if Task.query.filter_by(id=int(id)).first():
-        task = Task.query.filter_by(id=int(id)).first()
-        group = task.group
-        db.session.delete(task)
-        db.session.commit()
-        if group:
-            return redirect(url_for('group', id=group.id))
-        return redirect(url_for('menu'))
-
-
-@login_required
-@app.route('/change_status/<id>', methods=['GET', 'POST'])
-def completed(id):
-    if Task.query.filter_by(id=int(id)).first():
-        task = Task.query.filter_by(id=int(id)).first()
-        task.is_completed = not task.is_completed
-        db.session.commit()
-        if task.group:
-            return redirect(url_for('group', id=task.group.id))
-        return redirect(url_for('menu'))
-    return redirect(url_for('menu'))
-
-
 @app.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
     if current_user.is_authenticated:
@@ -260,24 +234,60 @@ def task(id):
     return render_template('task.html', task=task, form=description_form, sub_form=sub_form)
 
 
+@login_required
+@app.route('/delete/<id>', methods=['GET', 'POST'])
+def delete(id):
+    task = Task.query.filter_by(id=int(id)).first()    
+    if task.user_id and current_user.id:
+        group = task.group
+        db.session.delete(task)
+        db.session.commit()
+        if group:
+            return redirect(url_for('group', id=group.id))
+        return redirect(url_for('menu'))
+
+
+@login_required
+@app.route('/change_status/<id>', methods=['GET', 'POST'])
+def completed(id):
+    if Task.query.filter_by(id=int(id)).first():
+        task = Task.query.filter_by(id=int(id)).first()
+        task.is_completed = not task.is_completed
+        db.session.commit()
+        if task.group:
+            return redirect(url_for('group', id=task.group.id))
+        return redirect(url_for('menu'))
+    return redirect(url_for('menu'))
+
+
 @app.route('/delete/<id>/<sub_id>', methods=['GET', 'POST'])
 def delete_sub(id, sub_id):
-    if Subtask.query.filter_by(id=int(sub_id)).first():
-        subtask = Subtask.query.filter_by(id=int(sub_id)).first()
+    subtask = Subtask.query.filter_by(id=int(sub_id)).first()
+    if subtask and Task.query.filter_by(id=id).first().user_id == current_user.id:
         db.session.delete(subtask)
         db.session.commit()
         return redirect(url_for('task', id=id))
-    return redirect(url_for('menu'))
+    elif Task.query.filter_by(id=id).first().user_id != current_user.id:
+        flash("You have no permission to change this task status.")
+        return redirect(url_for('menu'))
+    else:
+        flash ("No subtask to delete.")
+    return redirect(url_for('task', id=id))
 
 
 @app.route('/change_status/<id>/<sub_id>', methods=['GET', 'POST'])
 def completed_sub(id, sub_id):
-    if Subtask.query.filter_by(id=int(sub_id)).first():
-        subtask = Subtask.query.filter_by(id=int(sub_id)).first()
+    subtask = Subtask.query.filter_by(id=int(sub_id)).first()
+    if subtask and Task.query.filter_by(id=id).first().user_id == current_user.id:
         subtask.is_completed = not subtask.is_completed
         db.session.commit()
         return redirect(url_for('task', id=id))
-    return redirect(url_for('menu'))
+    elif Task.query.filter_by(id=id).first().user_id != current_user.id:
+        flash("You have no permission to change this task status.")
+        return redirect(url_for('menu'))
+    else:
+        flash("No subtask to change status")
+    return redirect(url_for('task', id=id))
 
 
 @app.route('/group_delete/<id>', methods=['GET', 'POST'])
@@ -301,6 +311,8 @@ def delete_from_group(id, group_id):
             group.remove_user(user)
             db.session.commit()
             return redirect(url_for('group', id=group_id))
-        else:
+        elif group.admin_id != current_user.id:
             flash("You have no permissions to delete user from group!")
+        else:
+            flash("No user in group")
     return redirect(url_for('menu'))
