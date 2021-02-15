@@ -64,15 +64,21 @@ def register():
 @login_required
 @app.route('/groups')
 def groups():
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
     groups = current_user.groups
     return render_template('groups.html', groups=groups)
 
 @login_required
 @app.route('/group/<id>', methods=['GET', 'POST'])
 def group(id):
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
+    group = Group.query.filter_by(id=id).first()
+    if not group:
+        return redirect(url_for('menu'))
     form = GroupInvititionsForm()
     task_form = TaskForm()
-    group = Group.query.filter_by(id=id).first()
     tasks = group.tasks
     if form.submit.data and form.validate_on_submit():
         receiver = User.query.filter_by(username=form.name.data).first()
@@ -97,9 +103,11 @@ def group(id):
 @login_required
 @app.route('/group_invite/<group_id>/<user_id>')
 def group_invite(group_id, user_id):
-    grp = Group.query.filter_by(id=group_id).first()
-    if grp:
-        grp.add_user(User.query.filter_by(id=user_id).first())
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
+    group = Group.query.filter_by(id=group_id).first()
+    if group:
+        group.add_user(User.query.filter_by(id=user_id).first())
         db.session.commit()
         return redirect(url_for('group', id=group_id))
     else:
@@ -110,10 +118,12 @@ def group_invite(group_id, user_id):
 @login_required
 @app.route('/create_group', methods=['GET', 'POST'])
 def create_group():
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = CreateGroupForm()
     if form.validate_on_submit():
-        grp = Group(name=form.name.data, admin_id=current_user.id)
-        grp.add_user(current_user)
+        group = Group(name=form.name.data, admin_id=current_user.id)
+        group.add_user(current_user)
         db.session.commit()
         return redirect(url_for('groups'))
     return render_template('create_group.html', form=form)
@@ -122,6 +132,8 @@ def create_group():
 @login_required
 @app.route('/messages', methods=['GET', 'POST'])
 def messages():
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = MessageFilterForm()
     msg = current_user.get_messages()
     if form.validate_on_submit():
@@ -132,6 +144,8 @@ def messages():
 @login_required
 @app.route('/create_message', methods=['GET', 'POST'])
 def create_message():
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = CreateMessageForm()
     if form.validate_on_submit():
         receiver = User.query.filter_by(username=form.receiver.data).first()
@@ -148,6 +162,8 @@ def create_message():
 @login_required
 @app.route('/delete_message/<id>', methods=['GET', 'POST'])
 def delete_message(id):
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
     if Message.query.filter_by(id=id).first():
         msg = Message.query.filter_by(id=id).first()
         db.session.delete(msg)
@@ -215,6 +231,8 @@ def auth(token):
 @login_required
 @app.route('/task/<id>', methods=['GET', 'POST'])
 def task(id):
+    if not current_user.is_authenticated:
+        return redirect(url_for('menu'))
     description_form = TaskDescriptionForm()
     task = Task.query.filter_by(id=int(id)).first()
     sub_form = SubtaskForm()
@@ -237,6 +255,8 @@ def task(id):
 @login_required
 @app.route('/delete/<id>', methods=['GET', 'POST'])
 def delete(id):
+    if not current_user.is_authenticated:
+        return redirect(url_for('menu'))
     task = Task.query.filter_by(id=int(id)).first()    
     if not task:
         flash("No task in database.")
@@ -259,6 +279,8 @@ def delete(id):
 @login_required
 @app.route('/change_status/<id>', methods=['GET', 'POST'])
 def completed(id):
+    if not current_user.is_authenticated:
+        return redirect(url_for('menu'))
     task = Task.query.filter_by(id=int(id)).first()    
     if not task:
         flash("No task in database.")
@@ -271,6 +293,7 @@ def completed(id):
         else:
             flash("No permission to change this task status.")
     elif task.group_id:
+        group = task.group
         task.is_completed = not task.is_completed
         db.session.commit()
         return redirect(url_for('group', id=group.id))
@@ -279,6 +302,8 @@ def completed(id):
 
 @app.route('/delete/<id>/<sub_id>', methods=['GET', 'POST'])
 def delete_sub(id, sub_id):
+    if not current_user.is_authenticated:
+        return redirect(url_for('menu'))
     subtask = Subtask.query.filter_by(id=int(sub_id)).first()
     if subtask and subtask.main_task.user_id == current_user.id:
         db.session.delete(subtask)
@@ -294,6 +319,8 @@ def delete_sub(id, sub_id):
 
 @app.route('/change_status/<id>/<sub_id>', methods=['GET', 'POST'])
 def completed_sub(id, sub_id):
+    if not current_user.is_authenticated:
+        return redirect(url_for('menu'))
     subtask = Subtask.query.filter_by(id=int(sub_id)).first()
     if subtask and subtask.main_task.user_id == current_user.id:
         subtask.is_completed = not subtask.is_completed
@@ -309,6 +336,8 @@ def completed_sub(id, sub_id):
 
 @app.route('/group_delete/<id>', methods=['GET', 'POST'])
 def group_delete(id):
+    if not current_user.is_authenticated:
+        return redirect(url_for('menu'))
     if Group.query.filter_by(id=id).first():
         group = Group.query.filter_by(id=id).first()
         if group.admin_id == current_user.id:
@@ -321,6 +350,8 @@ def group_delete(id):
 
 @app.route('/delete_from_group/<id>/<group_id>', methods=['GET', 'POST'])
 def delete_from_group(id, group_id):
+    if not current_user.is_authenticated:
+        return redirect(url_for('menu'))
     if Group.query.filter_by(id=group_id).first() and User.query.filter_by(id=id).first():
         user = User.query.filter_by(id=id).first()
         group = Group.query.filter_by(id=group_id).first()

@@ -91,7 +91,7 @@
                                     {% endif %}
                                 </div>
                                 <div class="col-3 row">
-                                    <form class="col-4 form-temp" action="{{ url_for(change_status, id=task.id) }}">
+                                    <form class="col-4 form-temp" action={{ "/change_status/" + task.id|string }}>
                                         {% if task.is_completed %}
                                             <button type="submit" class="btn btn-warning form-item h-100"><i class="fas fa-times"></i></button>
                                         {% else %}
