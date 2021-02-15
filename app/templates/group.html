@@ -91,14 +91,14 @@
                                     {% endif %}
                                 </div>
                                 <div class="col-3 row">
-                                    <form class="col-4 form-temp" action={{ "/change_status/" + task.id|string }}>
+                                    <form class="col-4 form-temp" action="{{ url_for(change_status, id=task.id) }}">
                                         {% if task.is_completed %}
                                             <button type="submit" class="btn btn-warning form-item h-100"><i class="fas fa-times"></i></button>
                                         {% else %}
                                             <button type="submit" class="btn btn-success form-item h-100"><i class="fas fa-check"></i></button>
                                         {% endif %}
                                     </form>
-                                    <form class="col-4 form-temp" action={{ "/delete/" + task.id|string }}>
+                                    <form class="col-4 form-temp" action="{{ url_for('delete', id=task.id) }}">
                                         <button type="submit" class="btn btn-danger w-100 h-100 form-item"><i class="fas fa-trash"></i></button>
                                     </form>
                                     <button class="btn btn-primary col-4" type="button" data-toggle="collapse" data-target={{ "#collapse" + task.id|string }} aria-expanded="false" aria-controls={{ "collapse" + task.id|string }}>

@@ -238,36 +238,53 @@ def task(id):
 @app.route('/delete/<id>', methods=['GET', 'POST'])
 def delete(id):
     task = Task.query.filter_by(id=int(id)).first()    
-    if task.user_id and current_user.id:
+    if not task:
+        flash("No task in database.")
+        return redirect(url_for('menu'))
+    if task.user_id:
+        if task.user_id == current_user.id:
+            db.session.delete(task)
+            db.session.commit()
+            return redirect(url_for('menu'))
+        else:
+            flash("No permission to delete this task.")
+    elif task.group_id:
         group = task.group
         db.session.delete(task)
         db.session.commit()
-        if group:
-            return redirect(url_for('group', id=group.id))
-        return redirect(url_for('menu'))
+        return redirect(url_for('group', id=group.id))
+    return redirect(url_for('menu'))
 
 
 @login_required
 @app.route('/change_status/<id>', methods=['GET', 'POST'])
 def completed(id):
-    if Task.query.filter_by(id=int(id)).first():
-        task = Task.query.filter_by(id=int(id)).first()
+    task = Task.query.filter_by(id=int(id)).first()    
+    if not task:
+        flash("No task in database.")
+        return redirect(url_for('menu'))
+    if task.user_id:
+        if task.user_id == current_user.id:
+            task.is_completed = not task.is_completed
+            db.session.commit()
+            return redirect(url_for('menu'))
+        else:
+            flash("No permission to change this task status.")
+    elif task.group_id:
         task.is_completed = not task.is_completed
         db.session.commit()
-        if task.group:
-            return redirect(url_for('group', id=task.group.id))
-        return redirect(url_for('menu'))
+        return redirect(url_for('group', id=group.id))
     return redirect(url_for('menu'))
 
 
 @app.route('/delete/<id>/<sub_id>', methods=['GET', 'POST'])
 def delete_sub(id, sub_id):
     subtask = Subtask.query.filter_by(id=int(sub_id)).first()
-    if subtask and Task.query.filter_by(id=id).first().user_id == current_user.id:
+    if subtask and subtask.main_task.user_id == current_user.id:
         db.session.delete(subtask)
         db.session.commit()
         return redirect(url_for('task', id=id))
-    elif Task.query.filter_by(id=id).first().user_id != current_user.id:
+    elif subtask.main_task.user_id != current_user.id:
         flash("You have no permission to change this task status.")
         return redirect(url_for('menu'))
     else:
@@ -278,11 +295,11 @@ def delete_sub(id, sub_id):
 @app.route('/change_status/<id>/<sub_id>', methods=['GET', 'POST'])
 def completed_sub(id, sub_id):
     subtask = Subtask.query.filter_by(id=int(sub_id)).first()
-    if subtask and Task.query.filter_by(id=id).first().user_id == current_user.id:
+    if subtask and subtask.main_task.user_id == current_user.id:
         subtask.is_completed = not subtask.is_completed
         db.session.commit()
         return redirect(url_for('task', id=id))
-    elif Task.query.filter_by(id=id).first().user_id != current_user.id:
+    elif subtask.main_task.user_id != current_user.id:
         flash("You have no permission to change this task status.")
         return redirect(url_for('menu'))
     else:
